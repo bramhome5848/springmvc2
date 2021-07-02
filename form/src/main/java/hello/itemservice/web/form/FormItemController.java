@@ -3,6 +3,7 @@ package hello.itemservice.web.form;
 import hello.itemservice.domain.item.Item;
 import hello.itemservice.domain.item.ItemRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -10,6 +11,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 
+@Slf4j
 @Controller
 @RequestMapping("/form/items")
 @RequiredArgsConstructor
@@ -39,8 +41,34 @@ public class FormItemController {
         return "form/addForm";
     }
 
+    /**
+     * item.open=true -> 체크 박스를 선택하는 경우
+     * item.open=null //체크 박스를 선택하지 않는 경우
+     * 체크 박스를 체크하면 HTML Form 에서 open=on 이라는 값이 넘어간다.
+     * 스프링은 on 이라는 문자를 true 타입으로 변환
+     * 체크 박스를 선택하지 않고 폼을 전송하면 open 이라는 필드 자체가 서버로 전송되지 않음
+     * 수정 시 문제 발생 가능성 -> 체크를 해제 후 저장시 아무 값도 넘어가지 않기 때문에,
+     * 서버 구현에 따라서 값이 오지 않은 것으로 판단해서 값을 변경하지 않을 수도 있다.
+     *
+     * 히든 필드를 하나 만들어서, _open 처럼 기존 체크 박스 이름 앞에 언더스코어(_)를
+     * 붙여서 전송하면 체크를 해제했다고 인식할 수 있다. 히든 필드는 항상 전송된다.
+     * 따라서 체크를 해제한 경우 여기에서 open 은 전송되지 않고, _open 만 전송되는데,
+     * 이 경우 스프링 MVC 는 체크를 해제했다고 판단한다.
+     *
+     * 체크 박스 체크
+     * 체크 박스를 체크하면 스프링 MVC 가 open 에 값이 있는 것을 확인하고 사용한다.
+     * 이때 _open 은 무시한다.
+     *
+     * 체크 박스 미체크
+     * _open=on
+     * 체크 박스를 체크하지 않으면 스프링 MVC 가 _open 만 있는 것을 확인하고,
+     * open 의 값이 체크되지 않았다고 인식한다.
+     */
     @PostMapping("/add")
     public String addItem(@ModelAttribute Item item, RedirectAttributes redirectAttributes) {
+
+        log.info("item.open={}", item.getOpen());
+
         Item savedItem = itemRepository.save(item);
         redirectAttributes.addAttribute("itemId", savedItem.getId());
         redirectAttributes.addAttribute("status", true);
