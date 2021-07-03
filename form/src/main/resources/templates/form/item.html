@@ -50,6 +50,19 @@
         </div>
     </div>
 
+    <!-- multi checkbox -->
+    <!-- item.html 에는 th:object 를 사용하지 않았기 때문에 th:field 부분에 ${item.regions} 으로 적어주어야 한다.-->
+    <!-- 멀티 체크 박스에서 등록 지역을 선택해서 저장하면, 조회시에 checked 속성이 추가 -->
+    <!-- 조회시 타임리프는 th:field 에 지정한 값과 th:value 의 값을 비교해서 체크를 자동으로 처리 -->
+    <div>
+        <div>등록 지역</div>
+        <div th:each="region : ${regions}" class="form-check form-check-inline">
+            <input type="checkbox" th:field="${item.regions}" th:value="${region.key}" class="form-check-input" disabled>
+            <label th:for="${#ids.prev('regions')}"
+                   th:text="${region.value}" class="form-check-label">서울</label>
+        </div>
+    </div>
+
     <div class="row">
         <div class="col">
             <button class="w-100 btn btn-primary btn-lg"
