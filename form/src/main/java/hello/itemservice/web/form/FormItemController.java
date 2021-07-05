@@ -2,6 +2,7 @@ package hello.itemservice.web.form;
 
 import hello.itemservice.domain.item.Item;
 import hello.itemservice.domain.item.ItemRepository;
+import hello.itemservice.domain.item.ItemType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -33,6 +34,12 @@ public class FormItemController {
         regions.put("JEJU", "제주");
         return regions;
     }
+
+    @ModelAttribute("itemTypes")
+    public ItemType[] itemTypes() {
+        return ItemType.values();
+    }
+
 
     @GetMapping
     public String items(Model model) {
@@ -78,12 +85,16 @@ public class FormItemController {
      * _open=on
      * 체크 박스를 체크하지 않으면 스프링 MVC 가 _open 만 있는 것을 확인하고,
      * open 의 값이 체크되지 않았다고 인식한다.
+     *
+     * 라디오 버튼은 이미 선택이 되어 있다면,
+     * 수정시에도 항상 하나를 선택하도록 되어 있으므로 체크 박스와 달리 별도의 히든 필드를 사용할 필요가 없다.
      */
     @PostMapping("/add")
     public String addItem(@ModelAttribute Item item, RedirectAttributes redirectAttributes) {
 
         log.info("item.open={}", item.getOpen());
         log.info("item.regions={}", item.getRegions());
+        log.info("item.itemType={}", item.getItemType());
 
         Item savedItem = itemRepository.save(item);
         redirectAttributes.addAttribute("itemId", savedItem.getId());
