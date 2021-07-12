@@ -47,8 +47,18 @@ public class ValidationItemControllerV2 {
 
     /**
      * 주의
+     * BindingResult 는 검증할 대상 바로 다음에 와야한다. 순서가 중요!!!
+     * BindingResult 는 Model 에 자동으로 포함됨
      * BindingResult bindingResult 파라미터의 위치는 @ModelAttribute Item item 다음에 와야 한다.
-     * 아래에서는 item 객체의 binding 결과를 담고 있기 때문에 순서가 중요함..
+     *
+     * BindingResult 2 정리
+     * BindingResult 가 없으면 -> 400 오류가 발생하면서 컨트롤러가 호출되지 않고, 오류 페이지로 이동
+     * BindingResult 가 있으면 -> 오류 정보( FieldError )를 BindingResult 에 담아서 컨트롤러를 정상 호출
+     *
+     * BindingResult 에 검증 오류를 적용하는 3가지 방법
+     * 1. @ModelAttribute 의 객체에 타입 오류 등으로 바인딩이 실패하는 경우 -> 스프링이 FieldError 생성후 BindingResult 에 넣어줌
+     * 2. 개발자가 직접 넣어준다.
+     * 3. Validator 사용
      */
     @PostMapping("/add")
     public String addItemV1(@ModelAttribute Item item, BindingResult bindingResult, RedirectAttributes redirectAttributes, Model model) {
