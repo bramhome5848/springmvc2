@@ -57,8 +57,15 @@ public class ValidationItemControllerV2 {
      *
      * BindingResult 에 검증 오류를 적용하는 3가지 방법
      * 1. @ModelAttribute 의 객체에 타입 오류 등으로 바인딩이 실패하는 경우 -> 스프링이 FieldError 생성후 BindingResult 에 넣어줌
-     * 2. 개발자가 직접 넣어준다.
+     * 2. 개발자가 직접 넣어준다. -> 실습 한 방법
      * 3. Validator 사용
+     *
+     * BindingResult와 Errors
+     * BindingResult 는 인터페이스이고, Errors 인터페이스를 상속받고 있다.
+     * Errors 인터페이스는 단순한 오류 저장과 조회 기능을 제공한다.
+     * BindingResult 는 여기에 더해서 추가적인 기능들을 제공한다.
+     * addError() 도 BindingResult 가 제공하므로 여기서는 BindingResult 를 사용하자.
+     * 주로 관례상 BindingResult 를 많이 사용
      */
     @PostMapping("/add")
     public String addItemV1(@ModelAttribute Item item, BindingResult bindingResult, RedirectAttributes redirectAttributes, Model model) {
