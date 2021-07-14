@@ -132,9 +132,10 @@ public class ValidationItemControllerV2 {
          * bindingFailure 는 타입 오류 같은 바인딩이 실패했는지 여부를 적어주면 된다.
          * 여기서는 바인딩이 실패한 것은 아니기 때문에 false 를 사용
          *
-         * binding error 시에는 -> 가격에 문자입력 예
-         * Spring 이 bindingResult.addError(new FiledError("item", "itemName", "qqqq", true, null, null, "상품 이름은 필수 입니다."));
-         * 이 내용을 bindingResult 에 담고 Controller 를 호출
+         * 스프링의 바인딩 오류 처리
+         * 타입 오류로 바인딩에 실패하면 스프링은 FieldError 를 생성하면서 사용자가 입력한 값을 넣어둔다.
+         * 그리고 해당 오류를 BindingResult 에 담아서 컨트롤러를 호출한다.
+         * 따라서 타입 오류 같은 바인싱 실패시에도 사용자의 오류 메시지를 정상 출력할 수 있다.
          */
         if(!StringUtils.hasText(item.getItemName())) {
             bindingResult.addError(new FieldError("item", "itemName", item.getItemName(),
