@@ -169,15 +169,14 @@ public class ValidationItemControllerV2 {
         return "redirect:/validation/v2/items/{itemId}";
     }
 
-    @PostMapping("/add")
+    //@PostMapping("/add")
     public String addItemV3(@ModelAttribute Item item, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
 
         if (!StringUtils.hasText(item.getItemName())) {
             bindingResult.addError(new FieldError("item", "itemName", item.getItemName(),
                     false, new String[]{"required.item.itemName"}, null, null));
         }
-        if (item.getPrice() == null || item.getPrice() < 1000 || item.getPrice() >
-                1000000) {
+        if (item.getPrice() == null || item.getPrice() < 1000 || item.getPrice() > 1000000) {
             bindingResult.addError(new FieldError("item", "price", item.getPrice(),
                     false, new String[]{"range.item.price"}, new Object[]{1000, 1000000}, null));
         }
@@ -191,6 +190,53 @@ public class ValidationItemControllerV2 {
             if (resultPrice < 10000) {
                 bindingResult.addError(new ObjectError("item", new String[]{"totalPriceMin"},
                         new Object[]{10000, resultPrice}, null));
+            }
+        }
+
+        if (bindingResult.hasErrors()) {
+            log.info("errors={}", bindingResult);
+            return "validation/v2/addForm";
+        }
+
+        Item savedItem = itemRepository.save(item);
+        redirectAttributes.addAttribute("itemId", savedItem.getId());
+        redirectAttributes.addAttribute("status", true);
+        return "redirect:/validation/v2/items/{itemId}";
+    }
+
+    /**
+     * rejectValue() , reject() 를 사용해서 기존 코드 단순화
+     * 컨트롤러에서 BindingResult 는 검증해야 할 객체인 target 바로 다음에 온다.
+     * 따라서 BindingResult 는 이미 본인이 검증해야 할 객체인 target 을 알고 있다.
+     * BindingResult 가 제공하는 rejectValue() , reject() 를 사용하면
+     * FieldError , ObjectError 를 직접 생성하지 않고, 깔끔하게 검증 오류를 다룰 수 있다.
+     *
+     * rejectValue, reject
+     * field : 오류 필드명
+     * errorCode : 오류 코드(이 오류 코드는 메시지에 등록된 코드가 아니다. messageResolver 를 위한 오류 코드)
+     * errorArgs : 오류 메시지에서 {0} 을 치환하기 위한 값
+     * defaultMessage : 오류 메시지를 찾을 수 없을 때 사용하는 기본 메시지
+     */
+    @PostMapping("/add")
+    public String addItemV4(@ModelAttribute Item item, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
+
+        log.info("objectName={}", bindingResult.getObjectName());
+        log.info("target={}", bindingResult.getTarget());
+
+        if (!StringUtils.hasText(item.getItemName())) {
+            bindingResult.rejectValue("itemName", "required");
+        }
+        if (item.getPrice() == null || item.getPrice() < 1000 || item.getPrice() > 1000000) {
+            bindingResult.rejectValue("price", "range", new Object[]{1000, 1000000}, null);
+        }
+        if (item.getQuantity() == null || item.getQuantity() > 10000) {
+            bindingResult.rejectValue("quantity", "max", new Object[]{9999}, null);
+        }
+
+        if (item.getPrice() != null && item.getQuantity() != null) {
+            int resultPrice = item.getPrice() * item.getQuantity();
+            if (resultPrice < 10000) {
+                bindingResult.reject("totalPriceMin", new Object[]{10000, resultPrice}, null);
             }
         }
 
