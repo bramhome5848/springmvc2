@@ -66,4 +66,8 @@ public class SessionInfoController {
  * 이렇게 초기화 되면 세션 타임아웃으로 설정한 시간동안 세션을 추가로 사용할 수 있다.
  * session.getLastAccessedTime() : 최근 세션 접근 시간
  * LastAccessedTime 이후로 timeout 시간이 지나면, WAS 가 내부에서 해당 세션을 제거
+ *
+ * 실무에서 주의할 점은 세션에는 최소한의 데이터만 보관해야 한다는 점이다.
+ * login 용 Member 객체를 따로 만들어서 최소한의 데이터만 보관
+ * 보관한 데이터 용량 * 사용자 수로 세션의 메모리 사용량이 급격하게 늘어나서 장애로 이어질 수 있기 때문에
  */
