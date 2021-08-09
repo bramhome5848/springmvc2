@@ -68,6 +68,8 @@ public class ErrorPageController {
     }
 
     private void printErrorInfo(HttpServletRequest request) {
+        //해당 호출 때문에 Stack trace 가 한 번더 로그에 남게됨
+        //request.getAttribute(ERROR_EXCEPTION).toString() 이용시 확인하기 쉬움
         log.info("ERROR_EXCEPTION: {}", request.getAttribute(ERROR_EXCEPTION));    //예외
         log.info("ERROR_EXCEPTION_TYPE: {}", request.getAttribute(ERROR_EXCEPTION_TYPE));   //예외 타입
 
