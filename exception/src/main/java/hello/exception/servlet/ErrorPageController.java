@@ -74,6 +74,7 @@ public class ErrorPageController {
     }
 
     //api error controller
+    //Was 까지 exception 이 전달 된 후 BasicErrorController 에 의해 이곳이 호출됨
     //produces -> 클라이언트가 요청하는 HTTP Header 의 Accept 의 값이 application/json 일 때 해당 메서드가 호출
     @RequestMapping(value = "/error-page/500", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Map<String, Object>> errorPage500Api(
