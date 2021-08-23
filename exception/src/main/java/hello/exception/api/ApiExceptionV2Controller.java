@@ -1,4 +1,4 @@
-package hello.exception.exhandler;
+package hello.exception.api;
 
 import hello.exception.api.ApiExceptionController;
 import hello.exception.exception.UserException;
@@ -64,26 +64,26 @@ public class ApiExceptionV2Controller {
      * HTML 오류 화면
      * ModelAndView 를 사용해서 오류 화면(HTML)을 응답하는데 사용할 수도 있음 -> 거의 사용하지 않음..
      */
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(IllegalArgumentException.class)
-    public ErrorResult illegalExHandle(IllegalArgumentException e) {
-        log.error("[exceptionHandle] ex", e);
-        return new ErrorResult("BAD", e.getMessage());
-    }
-
-    @ExceptionHandler
-    public ResponseEntity<ErrorResult> userExHandler(UserException e) {
-        log.error("[exceptionHandle] ex", e);
-        ErrorResult errorResult = new ErrorResult("USER-EX", e.getMessage());
-        return new ResponseEntity<>(errorResult, HttpStatus.BAD_REQUEST);
-    }
-
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)   //없는 경우 요청에 대한 성공으로 200 OK 가 반환됨
-    @ExceptionHandler
-    public ErrorResult exHandle(Exception e) {
-        log.error("[exceptionHandle] ex", e);
-        return new ErrorResult("EX", "내부 오류");
-    }
+//    @ResponseStatus(HttpStatus.BAD_REQUEST)
+//    @ExceptionHandler(IllegalArgumentException.class)
+//    public ErrorResult illegalExHandle(IllegalArgumentException e) {
+//        log.error("[exceptionHandle] ex", e);
+//        return new ErrorResult("BAD", e.getMessage());
+//    }
+//
+//    @ExceptionHandler
+//    public ResponseEntity<ErrorResult> userExHandler(UserException e) {
+//        log.error("[exceptionHandle] ex", e);
+//        ErrorResult errorResult = new ErrorResult("USER-EX", e.getMessage());
+//        return new ResponseEntity<>(errorResult, HttpStatus.BAD_REQUEST);
+//    }
+//
+//    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)   //없는 경우 요청에 대한 성공으로 200 OK 가 반환됨
+//    @ExceptionHandler
+//    public ErrorResult exHandle(Exception e) {
+//        log.error("[exceptionHandle] ex", e);
+//        return new ErrorResult("EX", "내부 오류");
+//    }
 
     @GetMapping("/api2/members/{id}")
     public MemberDto getMember(@PathVariable("id") String id) {
